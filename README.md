@@ -34,6 +34,7 @@ You need conda. If you have none, install [Miniforge](https://github.com/conda-f
 ```bash
 conda env create -f environment.yml     # or: mamba env create -f environment.yml
 conda activate spatialtx
+python -m ipykernel install --user --name spatialtx --display-name "Python (spatialtx)"
 ```
 
 This takes 5–15 minutes. Full details and platform-specific fixes: [`docs/INSTALL.md`](docs/INSTALL.md).
