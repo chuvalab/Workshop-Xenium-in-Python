@@ -1,0 +1,103 @@
+# Spatial transcriptomics workshop — LUMC Anatomy & Embryology
+#
+# Create with:
+#     conda env create -f environment.yml
+#     conda activate spatialtx
+#     python -m ipykernel install --user --name spatialtx --display-name "Python (spatialtx)"
+#
+# Mamba is much faster and solves this file identically:
+#     mamba env create -f environment.yml
+#
+# Compiled/binary packages come from conda-forge (reliable wheels on Windows,
+# macOS-arm64 and Linux alike). The spatialdata family comes from pip, because
+# it releases faster there and the conda-forge feedstocks lag behind.
+
+name: spatialtx
+
+channels:
+  - conda-forge
+
+dependencies:
+  # ---- core ----------------------------------------------------------------
+  - python=3.11
+  - pip>=24.0
+
+  # ---- scientific stack ----------------------------------------------------
+  - numpy>=1.26,<3
+  - pandas>=2.1
+  - scipy>=1.11
+  - scikit-learn>=1.4
+  - scikit-image>=0.22
+  - numba>=0.59
+  - statsmodels>=0.14
+
+  # ---- io / arrays ---------------------------------------------------------
+  - h5py>=3.10
+  - pyarrow>=15
+  - dask>=2024.1
+  - xarray>=2024.1
+  - tifffile>=2024.1
+  - zarr>=2.16                 # lets the image crop read one window instead of a whole level
+  - imagecodecs>=2024.1        # needed to read the JPEG-2000 morphology OME-TIFFs
+  - fsspec>=2024.2
+
+  # ---- geometry (conda, not pip — pip wheels for these are fragile) --------
+  - shapely>=2.0
+  - geopandas>=0.14
+  - rtree>=1.2
+
+  # ---- plotting ------------------------------------------------------------
+  - matplotlib-base>=3.8
+  - seaborn>=0.13
+  - datashader>=0.16           # for rendering millions of transcripts
+
+  # ---- graph / clustering --------------------------------------------------
+  - python-igraph>=0.11
+  - leidenalg>=0.10
+  - pynndescent>=0.5
+
+  # ---- single-cell & spatial ----------------------------------------------
+  - anndata>=0.10
+  - scanpy>=1.10
+  - squidpy>=1.6
+
+  # ---- notebook ------------------------------------------------------------
+  - jupyterlab>=4.1
+  - ipykernel>=6.29
+  - ipywidgets>=8.1
+  - tqdm>=4.66
+
+  # ---- convenience ---------------------------------------------------------
+  - requests>=2.31
+  - pyyaml>=6.0
+
+  - pip:
+      # SpatialData stack — the multi-modal container (images + shapes + points
+      # + tables). Installed via pip so students get current releases.
+      - spatialdata>=0.2
+      - spatialdata-io>=0.1.5
+      - spatialdata-plot>=0.2
+
+      # Optional, used only in the optional section 4 of notebook 05.
+      # Detects vertical (z-stacked) doublets and tissue folds.
+      # Tiesmeyer et al., Nature Biotechnology 2026.
+      - ovrlpy>=1.0
+
+      # Optional, used only in notebook 05. Needs internet on first call
+      # because it downloads the interaction database; the notebook falls back
+      # to a shipped pre-computed result if it cannot reach the server.
+      - omnipath>=1.0
+
+# -----------------------------------------------------------------------------
+# NOTE FOR THE INSTRUCTOR
+# -----------------------------------------------------------------------------
+# The bounds above are minimums, deliberately loose so the solver succeeds on
+# whatever OS a student turns up with. That is the right trade-off for install
+# day, but it means two students can end up on different versions.
+#
+# Once you have installed and tested this on your own machine, freeze it:
+#
+#     conda env export --no-builds | grep -v "^prefix:" > environment.lock.yml
+#
+# and commit that file too. Point students at environment.yml first; if someone
+# hits a version-specific error, fall back to the lock file.
