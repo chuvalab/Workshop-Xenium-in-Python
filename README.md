@@ -21,7 +21,7 @@ conda solve.
 
 ```bash
 git clone https://github.com/chuvalab/Workshop-Xenium-in-Python.git
-cd spatialtx-workshop
+cd Workshop-Xenium-in-Python
 ```
 
 No git? Download the ZIP from the repository page and unzip it.
