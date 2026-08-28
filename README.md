@@ -81,10 +81,8 @@ email the organiser with the complete output before day 1.**
 | Time | | |
 |---|---|---|
 | 09:30 | `03_from_counts_to_cell_types` (finish) | Annotation, and the clusters that are artefacts |
-| 10:15 | `04_spatial_statistics` | Spatial graphs, neighbourhood enrichment, Moran's I, niches |
 | 11:15 | *break* | |
-| 11:30 | `05_beyond_single_cell` | Distance fields, contact, sub-cellular localisation, segmentation-free |
-| 12:15 | `06_design_your_own` | Design checklist for your own project; open challenges |
+| 11:30 | `04_spatial_statistics` | Spatial graphs, neighbourhood enrichment, Moran's I, niches |
 | 12:30 | end | |
 
 ---
