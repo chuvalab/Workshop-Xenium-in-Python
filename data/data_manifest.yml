@@ -1,0 +1,74 @@
+# Workshop data — where it comes from and what each file is.
+#
+# STUDENTS: you do not need to edit this. Run:
+#     python scripts/copy_data.py
+#
+# The data is on the department share:
+#     P:\PI\PI_Chuva_de_Sousa_Lopes\susana\SpatialTranscriptomicsWorkshop\data
+#
+# Copy it to your own `data/` folder rather than working off P: directly. The
+# notebooks write derived objects back into `data/`, and a room full of people
+# cannot all write to the same network folder — nor read a 500 MB h5ad over the
+# network in every cell without noticing.
+
+source:
+  name: Xenium Prime 5K — Human Ovarian Cancer, FFPE
+  vendor: 10x Genomics
+  run: Xenium_Prime_Ovarian_Cancer_FFPE_XRrun_outs
+  share: 'P:\PI\PI_Chuva_de_Sousa_Lopes\susana\SpatialTranscriptomicsWorkshop\data'
+  note: >-
+    A spatial crop of the public 10x demonstration dataset, prepared with
+    scripts/prepare_workshop_data.py and redistributed internally for teaching.
+    Check the 10x dataset licence before publishing anything derived from it.
+
+files:
+  - name: ovarian_subset.h5ad
+    required: true
+    description: >-
+      Raw counts plus QC metadata for every cell in the teaching crop. Loaded
+      with gex_only=False, so the negative control probes and codewords are
+      present — notebook 02 measures the background rate from them.
+
+  - name: ovarian_annotated.h5ad
+    required: true
+    description: >-
+      Day-1 output pre-computed: filtered, normalised, clustered, annotated.
+      Day 2 loads this so nobody is blocked by an unfinished day 1.
+
+  - name: transcripts_crop.parquet
+    required: true
+    description: >-
+      Individual decoded transcripts (x, y, z, gene, QV, cell) for the inner
+      window. The z column is what the optional ovrlpy section needs.
+
+  - name: cell_boundaries_crop.parquet
+    required: true
+    description: Cell segmentation polygons for the inner window.
+
+  - name: nucleus_boundaries_crop.parquet
+    required: true
+    description: Nuclear segmentation polygons for the inner window.
+
+  - name: crop_metadata.json
+    required: true
+    description: >-
+      Which micron coordinates the crops were taken from. Small, but needed:
+      notebook 04 uses it to place the morphology image under the cells.
+
+  - name: morphology_crop.ome.tif
+    required: false
+    description: >-
+      DAPI and boundary-stain channels for the inner window. Optional — the
+      notebooks fall back to boundary polygons if it is absent.
+
+# Files the notebooks create as you work. They land in your own data/ folder
+# and are not on the share:
+#   ovarian_qc.h5ad                   (notebook 02)
+#   ovarian_niches.h5ad               (notebook 04)
+#   ovarian_annotated_reference.h5ad  (a backup of the shipped annotated file,
+#                                      made automatically the first time
+#                                      notebook 03 overwrites it)
+#
+# Note that notebook 03 writes its result to ovarian_annotated.h5ad — the same
+# name as the shipped file. That is deliberate: day 2 then runs on your own
+# annotation if you finished day 1, and on the shipped one if you did not.
