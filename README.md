@@ -20,8 +20,8 @@ conda solve.
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/chuvalab/Workshop-Xenium-in-Python.git
-cd Workshop-Xenium-in-Python
+git clone https://github.com/<your-org>/spatialtx-workshop.git
+cd spatialtx-workshop
 ```
 
 No git? Download the ZIP from the repository page and unzip it.
@@ -39,14 +39,31 @@ python -m ipykernel install --user --name spatialtx --display-name "Python (spat
 
 This takes 5–15 minutes. Full details and platform-specific fixes: [`docs/INSTALL.md`](docs/INSTALL.md).
 
-### 3. Get the data
+### 3. Copy the data
 
-```bash
-python scripts/download_data.py
+The dataset lives on the department share:
+
+```
+P:\PI\PI_Chuva_de_Sousa_Lopes\susana\SpatialTranscriptomicsWorkshop\data
 ```
 
-About 1 GB. On a slow connection, ask the organiser for the USB stick and copy its
-contents into `data/`.
+Copy it into your own clone with:
+
+```bash
+python scripts/copy_data.py
+```
+
+The script finds the P: drive automatically. If P: is not mapped, or you are on a
+Mac, point it at wherever the share is mounted:
+
+```bash
+python scripts/copy_data.py --source "/Volumes/.../SpatialTranscriptomicsWorkshop/data"
+```
+
+**Copy it — do not work directly off P:.** The notebooks write their results back
+into `data/`, twenty-five people cannot write to the same network folder at once,
+and reading a large `.h5ad` over the network in every cell is painfully slow. You
+need roughly 2 GB free.
 
 ### 4. Check everything works
 
@@ -107,7 +124,7 @@ email the organiser with the complete output before day 1.**
 
 ```
 notebooks/    the workshop, in order
-scripts/      environment check, notebook check, data download and preparation
+scripts/      environment check, notebook check, data copy and preparation
 data/         downloaded data lands here (not in git)
 solutions/    worked answers — look after trying
 docs/         install guide, Python basics, instructor notes
@@ -125,6 +142,7 @@ Look for the **Try it yourself** boxes in each notebook. They have one line mark
 
 ## Data
 
+Distributed on the department share at `P:\PI\PI_Chuva_de_Sousa_Lopes\susana\SpatialTranscriptomicsWorkshop\data`.
 A spatial crop of the public 10x Genomics demonstration dataset
 *Xenium Prime 5K — Human Ovarian Cancer, FFPE*
 (`Xenium_Prime_Ovarian_Cancer_FFPE_XRrun_outs`), redistributed for teaching.
@@ -138,6 +156,8 @@ for exactly how the crop was made.
 - Afterwards: open an issue on this repository
 - Install problems before day 1: email the organiser, and **paste the full output of
   `python scripts/check_install.py`**
+- No access to the P: drive: tell the organiser well before day 1 — getting share
+  permissions can take a day or two
 
 ## Licence
 
