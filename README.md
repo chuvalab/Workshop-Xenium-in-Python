@@ -20,16 +20,18 @@ conda solve.
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/<your-org>/spatialtx-workshop.git
-cd spatialtx-workshop
+git clone https://github.com/chuvalab/Workshop-Xenium-in-Python.git
+cd Workshop-Xenium-in-Python
 ```
 
+Likely this is easier:
 No git? Download the ZIP from the repository page and unzip it.
 
 ### 2. Build the environment
 
 You need conda. If you have none, install [Miniforge](https://github.com/conda-forge/miniforge)
 (free, no licence issues, works on Windows/macOS/Linux).
+CD to the correct location if you downloaded the zip.
 
 ```bash
 conda env create -f environment.yml     # or: mamba env create -f environment.yml
@@ -47,23 +49,8 @@ The dataset lives on the department share:
 P:\PI\PI_Chuva_de_Sousa_Lopes\susana\SpatialTranscriptomicsWorkshop\data
 ```
 
-Copy it into your own clone with:
+Copy it into your own clone
 
-```bash
-python scripts/copy_data.py
-```
-
-The script finds the P: drive automatically. If P: is not mapped, or you are on a
-Mac, point it at wherever the share is mounted:
-
-```bash
-python scripts/copy_data.py --source "/Volumes/.../SpatialTranscriptomicsWorkshop/data"
-```
-
-**Copy it — do not work directly off P:.** The notebooks write their results back
-into `data/`, twenty-five people cannot write to the same network folder at once,
-and reading a large `.h5ad` over the network in every cell is painfully slow. You
-need roughly 2 GB free.
 
 ### 4. Check everything works
 
