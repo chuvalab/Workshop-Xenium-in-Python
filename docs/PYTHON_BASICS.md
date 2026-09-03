@@ -55,6 +55,73 @@ Either a name (`"red"`) or a hex code (`"#001158"`).
 
 ---
 
+## Objects, and what the dot does
+
+`adata` is an **object**: one thing holding the counts, the per-cell table, the
+per-gene table and the coordinates, so they cannot drift out of sync.
+
+The dot reaches inside it.
+
+```python
+adata.obs        # the per-cell table
+adata.var        # the per-gene table
+adata.obs.head() # a function that lives inside the table
+```
+
+**Parentheses are the thing to watch.** Without them you are asking for data; with
+them you are asking the object to do something.
+
+```python
+adata.obs.shape   # data about the table   -> (41235, 12)
+adata.obs.head()  # run this function      -> the first five rows
+adata.obs.head    # forgot the ()          -> a description of the function
+```
+
+Type `adata.` and press **Tab** to see everything inside it.
+
+### Coming from R?
+
+| Task | R / Seurat | Python / scanpy |
+|---|---|---|
+| per-cell metadata | `seurat@meta.data` | `adata.obs` |
+| first rows | `head(df)` | `df.head()` |
+| dimensions | `dim(obj)` | `obj.shape` |
+| a column | `df$total_counts` | `df["total_counts"]` |
+| number of cells | `ncol(seurat)` | `adata.n_obs` |
+
+In R the dot is just a character in a name (`data.frame`); in Python it always means
+"look inside". And a Seurat object is genes × cells, while `AnnData` is cells × genes —
+so `adata.obs` has one row per cell. Python also counts from 0, R from 1.
+
+## Repeating something: the `for` loop
+
+Four parts, and the last one is the unfamiliar bit.
+
+```python
+for r in [0.3, 0.6, 1.0]:
+    explore(resolution=r)
+```
+
+- `for` starts the loop
+- `r` is a name you invent; it takes each value in turn
+- `[0.3, 0.6, 1.0]` is the list to walk through
+- the `:` ends the header, and the **indented** line below is the body
+
+Indentation is the syntax, not decoration — it defines what is inside the loop.
+Jupyter indents for you after a colon.
+
+```python
+for r in [0.3, 1.0]:
+    explore(resolution=r)   # inside — runs twice
+print("done")               # outside — runs once
+```
+
+In R you would write `for (r in c(0.3, 0.6)) { ... }`. Python drops the parentheses
+and braces and uses a colon plus indentation instead; `c(...)` becomes `[...]`.
+
+Forgetting the colon gives `SyntaxError`; inconsistent indentation gives
+`IndentationError`. Both name the line.
+
 ## Reading the objects you will meet
 
 `adata` holds everything. Four parts matter:

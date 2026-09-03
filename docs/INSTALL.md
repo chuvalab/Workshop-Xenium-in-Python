@@ -112,18 +112,6 @@ conda env update -f environment.yml --prune
 Memory. Close other applications and Chrome tabs. The teaching crop is deliberately
 sized for 8 GB, but a browser with forty tabs will beat you to it.
 
-### `ovrlpy` is missing
-
-It is optional — section 4 of notebook 05 detects it and skips itself if absent.
-To install it into the workshop environment:
-
-```bash
-conda activate spatialtx
-pip install ovrlpy
-```
-
-It is also on bioconda (`conda install bioconda::ovrlpy`) if you prefer.
-
 ### Notebook 02: "Mean of empty slice" / no control features
 
 `adata.var["control"]` is all False, so there is nothing to compute a background

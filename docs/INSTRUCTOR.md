@@ -44,24 +44,6 @@ to be square — if your region of interest is a long invasive front, a 900 x 25
 inner window is a better teaching object than a square one. `--transcript-window N`
 remains as shorthand for a square N x N inner window.
 
-### If you want to teach the ovrlpy section
-
-Section 4 of notebook 05 is **optional** and off the critical path — it is skipped
-automatically if `ovrlpy` is not installed. Two things to decide before you commit:
-
-- **Window size.** ovrlpy fits a transcriptome embedding on the transcript window, so
-  400 x 400 um is on the small side. Use `--window-width 800 --window-height 800` or
-  larger if you plan to run it. That makes `transcripts_crop.parquet` roughly four
-  times bigger, so check the file sizes afterwards.
-- **Time.** Budget 15 minutes including the discussion, and run it yourself first to
-  time `ovr.analyse()` on your window. If day 2 is running late, this is the first
-  thing to cut — the segmentation-free section that follows makes an overlapping
-  point without an extra dependency.
-
-Worth it if your group works on dense tissue (lymphoid, brain, developing embryo)
-where vertical stacking is common, or on anything where tissue folds are a known
-problem. Less worth it for sparse, well-spread tissue.
-
 Then generate the day-2 starting point:
 
 ```bash
@@ -143,8 +125,11 @@ Shrink `--width/--height` and regenerate.
 
 ## Two weeks before
 
-- Send the repository link with a hard instruction to complete `00_setup_check.ipynb`
-  before day 1, and a deadline for reporting problems.
+- Send `slides/install_guide.pptx` with the repository link and a hard deadline for
+  reporting problems — about three days before day 1. Edit the repo URL and add your
+  email to the closing slide first.
+- Ask everyone to confirm they have run `00_setup_check.ipynb` successfully. A reply
+  saying "done" is worth chasing; silence usually means not started.
 - Ask each participant for **one sentence about their own tissue and question**.
   Collect these. Use them as examples throughout — "for Anna's kidney sections, the
   distance-to-glomerulus version of this would be..." is worth ten generic examples.
@@ -187,7 +172,7 @@ It is not a substitute for running the notebooks for real, which is the next ite
 | 09:30 | Lecture, slides 1–12 | 30 min. Include 5 min of live Xenium Explorer |
 | 10:00 | Notebook 01 | Let them read the markdown themselves; talk over the two plotting cells |
 | 10:45 | Break | |
-| 11:00 | Notebook 02 | The core of day 1. Do not rush the "QC in space" section |
+| 11:00 | Notebook 02 | The core of day 1. Section 4 is a 15-min choose-your-own-thresholds exercise — time-box it, then compare answers out loud |
 | 12:00 | Notebook 03, sections 1–2 |  Get them to a clustered object; annotation waits for day 2. Slides 13–20 (normalisation, then PCA/UMAP/Leiden, PCs, resolution, order) belong here rather than in the opening lecture — teach them against the notebook, not cold. **This dataset has a real depth-driven PC1**, so the fix-explorer in notebook 03 is a live demonstration rather than a hypothetical — budget 15 minutes for it |
 | 12:25 | Wrap | One question each for tomorrow, written on a sticky note |
 
@@ -199,13 +184,14 @@ It is not a substitute for running the notebooks for real, which is the next ite
 | 09:45 | Notebook 03, sections 3–5 | Notebook 03 writes `ovarian_annotated.h5ad`, the same name day 2 loads — so anyone who finishes uses their own annotation, and anyone who does not still has the shipped file. Nobody is blocked either way |
 | 10:15 | Notebook 04 | Neighbourhood enrichment and niches are the priority; cut Ripley if behind |
 | 11:15 | Break | |
-| 11:30 | Notebook 05 | The point of the whole workshop. Protect this slot ruthlessly. Section 4 (ovrlpy) is optional — cut it first if late |
-| 12:15 | Notebook 06 | Challenge 6 (their own tissue) if the group is engaged; challenge 1 if they want more code |
+| 11:30 | Notebook 05 | The point of the whole workshop. Protect this slot ruthlessly |
+| 12:20 | Wrap-up | Go round the room: one sentence each on what they would do with their own tissue. Point them at `docs/DESIGNING_YOUR_STUDY.md` for the design checklist we did not have time for |
 | 12:30 | End | |
 
-**The schedule will slip.** Planned sacrifices, in order: the ovrlpy section (05.4),
-Ripley (04), the segmentation-free section (05.5), the manual contact-null
-section (05.2). Never cut
+**The schedule will slip.** Planned sacrifices, in order: Ripley (04), the
+segmentation-free section (05.3), the draw-your-own-axis section (05.1b), the manual
+contact-null section (05.2). Never cut the distance-field section (05.1) or QC-in-space
+(02.3) — they carry the argument of the whole workshop. Never cut
 the distance-field section (05.1) or QC-in-space (02.4).
 
 ---
@@ -254,6 +240,140 @@ Assume a third have never used pandas and a third could teach the scanpy parts.
 | Silence during exercises | question too open for a beginner | Have a scaffolded version ready: give them the first two lines |
 
 ---
+
+## The DEG export
+
+Notebook 03 section 3 writes three files into `results/`: the full DEG table for every
+cluster, a top-25-per-cluster version, and an Excel workbook with one sheet per
+cluster. People do ask for this, and it is the artefact they take back to their PI.
+
+Two things to say while it runs, both of which apply to every scRNA-seq paper as well:
+
+- **The p-values are anti-conservative.** Clusters were defined from the same data the
+  test uses, so the test is not independent of the grouping — every cluster gets
+  "highly significant" DEGs, including clusters split out of a homogeneous population.
+  Use the ranking and effect sizes; the honest test of whether a cluster is real is
+  whether it reappears in another sample.
+- **Sort by `above_background`, not by p-value.** The flag comes from notebook 02, and
+  a DEG that never beat the negative-control null is not a finding.
+
+The `pct_in` versus `pct_out` columns are the practical ones. A gene in 12% of the
+cluster and 8% of everything else can be "significant" with enough cells and is not a
+marker.
+
+## Permutation counts in notebook 04
+
+Every method in notebook 04 builds its null by shuffling, and the defaults in the
+squidpy docs are too slow for a laptop in a session. We use `n_perms=100` for
+neighbourhood enrichment, `n_simulations=20` for Ripley and `N_PERMS=10` for Moran's I.
+
+There is a boxed note explaining what this costs, and it is worth reading aloud rather
+than skipping: with 10 permutations the smallest possible p-value is 0.09, so nothing
+can be significant. Across 5,000 genes, Bonferroni would need roughly 100,000
+permutations before any gene could survive in principle.
+
+The point to land: **the statistic does not depend on n_perms — only the p-value
+does.** So the ranking of genes is trustworthy today and the p-values are not, which
+is exactly the right tool for choosing what to look at. Someone always asks whether
+the results are "real"; this is the honest answer.
+
+If a student's machine is fast and they finish early, `N_PERMS = 1000` on Moran's I is
+a reasonable thing for them to set running while they do the exercises.
+
+## Running the choose-your-own-thresholds exercise
+
+Section 4 of notebook 02 is the one place students make a real decision, and it is the
+most valuable fifteen minutes of day 1. Run it deliberately.
+
+**Time-box it.** Announce fifteen minutes for steps 1–4 and hold to it. Without a
+limit, careful people will still be adjusting numbers at the coffee break.
+
+**Insist on step 3.** The instinct is to pick a number, read the cell count, and move
+on. The learning is in plotting what was removed *in space*. Walk the room and ask to
+see that plot rather than their thresholds.
+
+**Then compare, out loud.** The last cell prints each person's choice as a single
+line. Ask four or five to read theirs out and write them on the board. On our crop the
+realistic spread is roughly:
+
+| Choice | kept overall | kept in the tumour nest |
+|---|---|---|
+| lenient (counts ≥ 5) | ~96% | ~90% |
+| middle (counts ≥ 10) | ~91% | ~77% |
+| strict (counts ≥ 30, area p5–p95) | ~56% | ~24% |
+
+That third row is the teaching moment: a threshold that sounds merely cautious removes
+three quarters of the tumour. Nobody picks it intending that.
+
+**Do not adjudicate.** There is no right answer, and saying so is the point. Push
+instead on the methods sentence — if someone cannot write one they would defend in
+review, the threshold is not yet a decision.
+
+**Day 2 is safe regardless.** Notebook 04 loads the annotation, and anyone who has not
+finished notebook 03 gets the shipped file. Tell them this *before* they start, or the
+cautious will pick thresholds that remove nothing.
+
+**If you are running late,** tell them to keep the pre-set numbers and skip to step 3.
+The spatial plot alone carries most of the lesson.
+
+## The parameter-exploration section in notebook 03
+
+Section 2 is the notebook-03 equivalent of the QC exercise: students pick `n_pcs`,
+`n_neighbors` and `resolution` themselves, then commit. It runs on an 8,000-cell
+subsample so each attempt takes seconds.
+
+**There is a `for` loop tutorial in the middle of it.** The resolution sweep is the
+first loop most beginners meet, so it is explained properly — anatomy, indentation,
+the R comparison — followed by a fill-in-the-blanks exercise where they write one for
+`n_neighbors`. The placeholders are named `VALUES_TO_TRY` and `LOOP_VARIABLE`, so an
+unfilled blank raises a `NameError` that says which one. Give this three minutes and
+walk the room; it is the single most transferable thing in the notebook for someone
+who has never coded.
+
+**Budget ten minutes and time-box it**, same as the QC section. The four boxed
+try-it cells are meant to be run once each, not optimised.
+
+**The most valuable one is the last.** `min_dist` and `spread` change the UMAP and
+nothing else — the cluster count printed above does not move. That is direct evidence
+for the claim on slide 16 that a UMAP is a drawing rather than an analysis, and it
+lands far better here, on their own screen, than it does from the front.
+
+**On resolution, resist giving a number.** The honest answer is that it depends on the
+question: immune subtypes need finer than tissue compartments. Push them towards the
+test that does work — can you name every cluster with markers?
+
+**Chosen values are recorded** in `adata.uns["clustering_params"]` and carried into the
+saved object, so they end up in a methods section rather than in someone's memory.
+
+**If you are running late,** tell them to keep the defaults in the commit cell and skip
+the four try-it boxes. Nothing downstream depends on having explored.
+
+## Two hands-on additions worth protecting
+
+**Colour choice (notebook 03, section 5).** Students set their own palette, stored in
+`adata.uns["cell_type_colors"]` so scanpy and the tissue plot both use it, and it
+travels into day 2. The exercise that makes the point is the last one: everything grey
+except one lineage. Ask the room to compare that against the ten-colour default and
+say which they would put in a paper. Five minutes, and it changes how people make
+figures afterwards.
+
+**Draw your own axis (notebook 05, section 1b).** Students pick two points off a
+coordinate grid and get a signed perpendicular distance for every cell — negative one
+side, positive the other — then run the same composition and expression-versus-distance
+analyses as section 1.
+
+This generalises the whole of section 1: distance-to-a-nest is one special case, and
+an axis you place by eye works for structures no marker labels (a capsule, a lumen, a
+fold, a lobe boundary). It is the version they will actually use on their own tissue.
+
+Two things to say while they do it. **Fix the line before looking at the expression
+plots** — you can otherwise slide it until a gene looks interesting, and the notebook
+says so. And **a straight line is a model**: if the front curves, the ends of the line
+mean something different from the middle, and the niche-based distance from section 1
+is the better tool.
+
+Ten minutes. If the session is running late this is a reasonable cut, because
+section 1 already teaches the concept.
 
 ## Adapting this to your own dataset
 
