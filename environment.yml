@@ -34,6 +34,7 @@ dependencies:
   # ---- io / arrays ---------------------------------------------------------
   - h5py>=3.10
   - pyarrow>=15
+  - openpyxl>=3.1              # so the DEG table can be written as .xlsx
   - dask>=2024.1
   - xarray>=2024.1
   - tifffile>=2024.1
@@ -77,11 +78,6 @@ dependencies:
       - spatialdata>=0.2
       - spatialdata-io>=0.1.5
       - spatialdata-plot>=0.2
-
-      # Optional, used only in the optional section 4 of notebook 05.
-      # Detects vertical (z-stacked) doublets and tissue folds.
-      # Tiesmeyer et al., Nature Biotechnology 2026.
-      - ovrlpy>=1.0
 
       # Optional, used only in notebook 05. Needs internet on first call
       # because it downloads the interaction database; the notebook falls back

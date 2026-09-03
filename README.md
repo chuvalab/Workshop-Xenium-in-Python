@@ -20,18 +20,16 @@ conda solve.
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/chuvalab/Workshop-Xenium-in-Python.git
-cd Workshop-Xenium-in-Python
+git clone https://github.com/<your-org>/spatialtx-workshop.git
+cd spatialtx-workshop
 ```
 
-Likely this is easier:
 No git? Download the ZIP from the repository page and unzip it.
 
 ### 2. Build the environment
 
 You need conda. If you have none, install [Miniforge](https://github.com/conda-forge/miniforge)
 (free, no licence issues, works on Windows/macOS/Linux).
-CD to the correct location if you downloaded the zip.
 
 ```bash
 conda env create -f environment.yml     # or: mamba env create -f environment.yml
@@ -49,8 +47,23 @@ The dataset lives on the department share:
 P:\PI\PI_Chuva_de_Sousa_Lopes\susana\SpatialTranscriptomicsWorkshop\data
 ```
 
-Copy it into your own clone
+Copy it into your own clone with:
 
+```bash
+python scripts/copy_data.py
+```
+
+The script finds the P: drive automatically. If P: is not mapped, or you are on a
+Mac, point it at wherever the share is mounted:
+
+```bash
+python scripts/copy_data.py --source "/Volumes/.../SpatialTranscriptomicsWorkshop/data"
+```
+
+**Copy it — do not work directly off P:.** The notebooks write their results back
+into `data/`, twenty-five people cannot write to the same network folder at once,
+and reading a large `.h5ad` over the network in every cell is painfully slow. You
+need roughly 2 GB free.
 
 ### 4. Check everything works
 
@@ -81,8 +94,10 @@ email the organiser with the complete output before day 1.**
 | Time | | |
 |---|---|---|
 | 09:30 | `03_from_counts_to_cell_types` (finish) | Annotation, and the clusters that are artefacts |
+| 10:15 | `04_spatial_statistics` | Spatial graphs, neighbourhood enrichment, Moran's I, niches |
 | 11:15 | *break* | |
-| 11:30 | `04_spatial_statistics` | Spatial graphs, neighbourhood enrichment, Moran's I, niches |
+| 11:30 | `05_beyond_single_cell` | Distance fields, your own axis, contact, segmentation-free |
+| 12:20 | Wrap-up | What you would do with your own tissue; questions |
 | 12:30 | end | |
 
 ---
@@ -94,26 +109,29 @@ email the organiser with the complete output before day 1.**
   recognise when a "quality" filter is silently deleting biology
 - Normalise, cluster and annotate a targeted panel without importing scRNA-seq
   assumptions that do not hold
+- Produce a DEG table per cluster, export it, and know which columns to trust
 - Build a spatial neighbourhood graph and defend its parameters
 - Test cell-type co-localisation against a null that respects tissue architecture
 - Identify tissue niches and relate them to structures you can name
-- Measure gene expression as a function of distance to an anatomical structure
-- Quantify sub-cellular transcript localisation
+- Measure gene expression as a function of distance to an anatomical structure, or to
+  an axis you place yourself
+- Judge whether a result depends on the segmentation, by re-testing it without cells
 - Judge whether a published spatial result is real or an artefact of segmentation or
   of a too-easy null
 - Design a spatial experiment, including the hard question of what *n* is
+  (see [`docs/DESIGNING_YOUR_STUDY.md`](docs/DESIGNING_YOUR_STUDY.md))
 
 ---
 
 ## Repository layout
 
 ```
-notebooks/    the workshop, in order
+notebooks/    the workshop, in order (plus A1 and A2, optional appendices)
 scripts/      environment check, notebook check, data copy and preparation
 data/         downloaded data lands here (not in git)
 solutions/    worked answers — look after trying
-docs/         install guide, Python basics, instructor notes
-slides/       the lecture deck, plus the script that builds it
+docs/         install guide, Python basics, study design, instructor notes
+slides/       the lecture deck and the pre-workshop install guide
 ```
 
 ## New to Python?
